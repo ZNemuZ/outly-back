@@ -1,8 +1,12 @@
 package usecase
 
 import (
+	"os"
+	"time"
+
 	"github.com/ZNemuZ/outly-back/model"
 	"github.com/ZNemuZ/outly-back/repository"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -37,4 +41,27 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponce, error) {
 		UserName: newUser.UserName,
 	}
 	return resUser, nil
+}
+
+func (uu *userUsecase) Login(user model.User) (string, error) {
+	storedUser := model.User{}
+	if err := uu.ur.GetUserByEmail(&storedUser, user.Email); err != nil {
+		return "", err
+	}
+	//パスワードの検証
+	err := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
+	if err != nil {
+		return "", err
+	}
+	//jwtトークンの生成
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": storedUser.ID,
+		"exp":     time.Now().Add(time.Hour * 12).Unix(), //jwtの有効期限
+	})
+	//署名
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
