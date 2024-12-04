@@ -30,7 +30,7 @@ func (pr *postRepository) GetAllPosts(posts *[]model.Post, userId uint) error {
 }
 
 func (pr *postRepository) GetPostById(post *model.Post, userId uint, postId uint) error {
-	if err := pr.db.Joins("User").Where("user_id=?", userId).First(post, post.ID).Error; err != nil {
+	if err := pr.db.Joins("User").Where("user_id=?", userId).First(post, postId).Error; err != nil {
 		return err
 	}
 	return nil
