@@ -6,14 +6,17 @@ import (
 	"github.com/ZNemuZ/outly-back/repository"
 	"github.com/ZNemuZ/outly-back/router"
 	"github.com/ZNemuZ/outly-back/usecase"
+	"github.com/ZNemuZ/outly-back/validator"
 )
 
 func main() {
 	db := db.NewDb()
+	userValidator := validator.NewUserValidator()
+	postValidator := validator.NewPostValidator()
 	userRepository := repository.NewUserRepository(db)
 	postRepository := repository.NewPostRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository)
-	postUsecase := usecase.NewPostUsecase(postRepository)
+	userUsecase := usecase.NewUserUsecase(userRepository, userValidator)
+	postUsecase := usecase.NewPostUsecase(postRepository, postValidator)
 	userController := controller.NewUserController(userUsecase)
 	postController := controller.NewPostController(postUsecase)
 	e := router.NewRouter(userController, postController)

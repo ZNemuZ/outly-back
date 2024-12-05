@@ -3,6 +3,7 @@ package usecase
 import (
 	"github.com/ZNemuZ/outly-back/model"
 	"github.com/ZNemuZ/outly-back/repository"
+	"github.com/ZNemuZ/outly-back/validator"
 )
 
 type IPostUsecase interface {
@@ -13,10 +14,11 @@ type IPostUsecase interface {
 }
 type postUsecase struct {
 	pr repository.IPostRepository
+	pv validator.IPostValidator
 }
 
-func NewPostUsecase(pr repository.IPostRepository) IPostUsecase {
-	return &postUsecase{pr}
+func NewPostUsecase(pr repository.IPostRepository, pv validator.IPostValidator) IPostUsecase {
+	return &postUsecase{pr, pv}
 }
 
 func (pu *postUsecase) GetAllPosts(userId uint) ([]model.PostResponce, error) {
@@ -53,6 +55,10 @@ func (pu *postUsecase) GetPostById(userId uint, postId uint) (model.PostResponce
 }
 
 func (pu *postUsecase) CreatePost(post model.Post) (model.PostResponce, error) {
+	//バリデーション
+	if err := pu.pv.PostValidate(post); err != nil {
+		return model.PostResponce{}, err
+	}
 	if err := pu.pr.CreatePost(&post); err != nil {
 		return model.PostResponce{}, err
 	}

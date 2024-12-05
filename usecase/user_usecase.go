@@ -6,6 +6,7 @@ import (
 
 	"github.com/ZNemuZ/outly-back/model"
 	"github.com/ZNemuZ/outly-back/repository"
+	"github.com/ZNemuZ/outly-back/validator"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -16,15 +17,20 @@ type IUserUsecase interface {
 }
 type userUsecase struct {
 	ur repository.IUserRepository
+	uv validator.IUserValidator
 }
 
 // 依存性を注入するためのコンストラクタ
-func NewUserUsecase(ur repository.IUserRepository) IUserUsecase {
+func NewUserUsecase(ur repository.IUserRepository, uv validator.IUserValidator) IUserUsecase {
 	//userUsecaseの構造体をurで作成してポインタを返す
-	return &userUsecase{ur}
+	return &userUsecase{ur, uv}
 }
 
 func (uu *userUsecase) SignUp(user model.User) (model.UserResponce, error) {
+	//バリデーション
+	if err := uu.uv.SignUpValidator(user); err != nil {
+		return model.UserResponce{}, err
+	}
 	//パスワードをハッシュ化
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
@@ -44,6 +50,10 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponce, error) {
 }
 
 func (uu *userUsecase) Login(user model.User) (string, error) {
+	//バリデーション
+	if err := uu.uv.LoginValidator(user); err != nil {
+		return "", err
+	}
 	storedUser := model.User{}
 	if err := uu.ur.GetUserByEmail(&storedUser, user.Email); err != nil {
 		return "", err
