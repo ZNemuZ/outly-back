@@ -23,14 +23,14 @@ func NewRouter(uc controller.IUserController, pc controller.IPostController) *ec
 		CookiePath:     "/",
 		CookieDomain:   os.Getenv("API_DOMAIN"), //cookieの送信される範囲を指定
 		CookieHTTPOnly: true,
-		// CookieSameSite: http.SameSiteNoneMode,
-		CookieSameSite: http.SameSiteDefaultMode,
+		CookieSameSite: http.SameSiteNoneMode,
+		// CookieSameSite: http.SameSiteDefaultMode, //postMan用
 		// CookieMaxAge: 60,
 	}))
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.LogIn)
 	e.POST("/logout", uc.LogOut)
-	e.POST("/csrf", uc.CsrfToken)
+	e.GET("/csrf", uc.CsrfToken)
 	p := e.Group("/posts")
 	//postsに関連するエンドポイントに向かう際に必ず実行される
 	p.Use(echojwt.WithConfig(echojwt.Config{ //認証ミドルウェアに設定を渡す
