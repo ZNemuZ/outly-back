@@ -13,7 +13,7 @@ import (
 func NewRouter(uc controller.IUserController, pc controller.IPostController) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000", os.Getenv("FE_URL")}, //許可するオリジンの設定
+		AllowOrigins: []string{"http://localhost:5173", os.Getenv("FE_URL")}, //許可するオリジンの設定
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept,
 			echo.HeaderAccessControlAllowHeaders, echo.HeaderXCSRFToken}, //許可するヘッダー
 		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE"},
