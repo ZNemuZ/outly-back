@@ -23,7 +23,7 @@ func NewPostRepository(db *gorm.DB) IPostRepository {
 }
 
 func (pr *postRepository) GetAllPosts(posts *[]model.Post, userId uint) error {
-	if err := pr.db.Joins("User").Where("user_id=?", userId).Order("created_at").Find(posts).Error; err != nil {
+	if err := pr.db.Joins("User").Order("created_at DESC").Find(posts).Error; err != nil {
 		return err
 	}
 	return nil
