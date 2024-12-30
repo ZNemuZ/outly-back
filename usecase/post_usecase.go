@@ -59,11 +59,17 @@ func (pu *postUsecase) CreatePost(post model.Post) (model.PostResponce, error) {
 	if err := pu.pv.PostValidate(post); err != nil {
 		return model.PostResponce{}, err
 	}
+	userName, err := pu.pr.GetUserName(post.UserId) //userIDからuserNameを取得してくる
+	if err != nil {
+		return model.PostResponce{}, err
+	}
+	post.UserName = userName //postに取得してきたuserNameを追加
 	if err := pu.pr.CreatePost(&post); err != nil {
 		return model.PostResponce{}, err
 	}
 	resPost := model.PostResponce{
 		ID:        post.ID,
+		UserName:  post.UserName,
 		Title:     post.Title,
 		Content:   post.Content,
 		NiceCount: post.NiceCount,

@@ -12,6 +12,7 @@ type IPostRepository interface {
 	GetPostById(post *model.Post, userId uint, postId uint) error
 	CreatePost(post *model.Post) error
 	DeletePost(userId uint, postId uint) error
+	GetUserName(userId uint) (string, error)
 }
 
 type postRepository struct {
@@ -51,4 +52,11 @@ func (pr *postRepository) DeletePost(userId uint, postId uint) error {
 		return fmt.Errorf("object does not exist")
 	}
 	return nil
+}
+func (pr *postRepository) GetUserName(userId uint) (string, error) {
+	var user model.User
+	if err := pr.db.First(&user, userId).Error; err != nil {
+		return "", err
+	}
+	return user.UserName, nil
 }
