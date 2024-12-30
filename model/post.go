@@ -16,6 +16,7 @@ type Post struct {
 type PostResponce struct {
 	ID        uint      `json:"id" gorm:"primaryKey"`
 	UserName  string    `json:"user_name" gorm:"not null;default:''"`
+	UserId    uint      `json:"user_id" gorm:"not null"`
 	Title     string    `json:"title" gorm:"not null;type:varchar(50)"`
 	Content   string    `json:"content" gorm:"type:varchar(300)"`
 	NiceCount int       `json:"nice_count" gorm:"not null;default:0"`

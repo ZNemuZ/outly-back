@@ -30,6 +30,8 @@ func (pu *postUsecase) GetAllPosts(userId uint) ([]model.PostResponce, error) {
 	for _, v := range posts {
 		p := model.PostResponce{
 			ID:        v.ID,
+			UserName:  v.User.UserName,
+			UserId:    v.UserId,
 			Title:     v.Title,
 			Content:   v.Content,
 			NiceCount: v.NiceCount,
