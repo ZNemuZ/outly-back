@@ -49,7 +49,7 @@ func (pr *postRepository) DeletePost(userId uint, postId uint) error {
 		return result.Error
 	}
 	if result.RowsAffected < 1 {
-		return fmt.Errorf("object does not exist")
+		return fmt.Errorf("cannot be deleted")
 	}
 	return nil
 }
